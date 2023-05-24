@@ -1,0 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/24 17:35:27 by ataouaf           #+#    #+#             */
+/*   Updated: 2023/05/24 17:52:58 by ataouaf          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+int	one_philo(t_data * data)
+{
+	data->time_to_start = get_time();
+	if (pthread_create(&data->id_thread[0], NULL, &manage, &data->philosophers[0]))
+		return (print_error("Error create thread", data));
+	pthread_detach(data->id_thread[0]);
+	while (data->dead == 0)
+		ft_usleep(0);
+	
+}
+
+int main(int argc, char *argv[])
+{
+	t_data data;
+
+	if (check_input(argc, argv, &data))
+		return (1);
+	if (check_num(argc, argv, &data))
+		return (1);
+	if (init_pthreads(&data) != 0)
+		return (1);
+	if (init_forks(&data) != 0)
+		return (print_error("Error init forks\n", &data));
+	if (init_philosophers(&data) != 0)
+		return (print_error("Error init philos\n", &data));
+	return 0;
+}
