@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:21 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/05/22 15:10:06 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/05/29 12:01:12 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ int	init_philosophers(t_data *data)
 	i = 0;
 	while (i < data->num_philo)
 	{
-		data->philosophers[i].id = i + 1;
 		data->philosophers[i].data = data;
+		data->philosophers[i].id = i + 1;
 		data->philosophers[i].time_to_die = data->time_to_die;
 		data->philosophers[i].dining_count = 0;
 		data->philosophers[i].dining = 0;
@@ -43,11 +43,11 @@ int	init_forks(t_data *data)
 	}
 	data->philosophers[0].right_fork = &data->forks[data->num_philo - 1];
 	data->philosophers[0].left_fork = &data->forks[0];
-	i = 0;
-	while (i <data->num_philo)
+	i = 1;
+	while (i < data->num_philo)
 	{
-		data->philosophers[i].right_fork = &data->forks[i];
-		data->philosophers[i].left_fork = &data->forks[i - 1];
+		data->philosophers[i].right_fork = &data->forks[i - 1];
+		data->philosophers[i].left_fork = &data->forks[i];
 		i++;
 	}
 	return (0);

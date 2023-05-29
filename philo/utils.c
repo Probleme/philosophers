@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:13:59 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/05/24 17:34:17 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/05/25 10:34:58 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,24 @@ int	ft_usleep(useconds_t time)
 	while ((get_time() - start) < time)
 		usleep(time / 10);
 	return (0);
+}
+void	ft_exit(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->num_philo)
+	{
+		pthread_mutex_destroy(&data->forks[i]);
+		pthread_mutex_destroy(&data->philosophers[i].lock);
+		i++;
+	}
+	pthread_mutex_destroy(&data->write);
+	pthread_mutex_destroy(&data->lock);
+	if (data->id_thread)
+		free(data->id_thread);
+	if (data->forks)
+		free(data->forks);
+	if (data->philosophers)
+		free(data->philosophers);
 }
