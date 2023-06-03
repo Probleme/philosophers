@@ -6,43 +6,65 @@
 /*   By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:35:27 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/05/29 12:14:46 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/03 18:19:47 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../inc/philo.h"
 
-int	one_philo(t_data *data)
+int	is_numeric(char *str)
 {
-	data->time_to_start = get_time();
-	if (pthread_create(&data->id_thread[0], NULL, &mythread,
-			&data->philosophers[0]))
-		return (print_error("Error create thread", data));
-	pthread_detach(data->id_thread[0]);
-	while (data->dead == 0)
-		ft_usleep(0);
-	ft_exit(data);
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] < '0' || str[i] > '9')
+			return (1);
+		i++;
+	}
 	return (0);
 }
 
-int	main(int argc, char *argv[])
+int	check_input(int argc, char **argv)
+{
+	int	i;
+
+	i = 1;
+	while (i != argc)
+	{
+		if (is_numeric(argv[i]))
+			return (1);
+		i++;
+	}
+	if (ft_atoi(argv[1]) < 1)
+		return (1);
+	if (ft_atoi(argv[2]) < 0)
+		return (1);
+	if (ft_atoi(argv[3]) < 0)
+		return (1);
+	if (ft_atoi(argv[4]) < 0)
+		return (1);
+	if (argc == 6)
+		if (ft_atoi(argv[5]) < 0)
+			return (1);
+	return (0);
+}
+
+int	main(int argc, char **argv)
 {
 	t_data	data;
 
-	if (check_input(argc, argv, &data))
+	if (argc != 5 && argc != 6)
+		return (print_error("Error\nTry : number_of_philosophers \
+			time_to_die time_to_eat time_to_sleep \
+			[number_of_times_each_philosopher_must_eat]"));
+	if (check_input(argc, argv))
+		return (print_error("Error\nOnly positive numbers or \
+			at least one philosopher"));
+	if (init_philo(argc, argv, &data))
 		return (1);
-	if (check_num(argc, argv, &data))
+	if (begin_philo(&data, (&data)->philo))
 		return (1);
-	if (init_pthreads(&data) != 0)
-		return (1);
-	if (init_forks(&data) != 0)
-		return (print_error("Error init forks\n", &data));
-	if (init_philosophers(&data) != 0)
-		return (print_error("Error init philos\n", &data));
-	if (data.num_philo == 1)
-		return (one_philo(&data));
-	if (init_threads(&data))
-		return 1;
-	ft_exit(&data);
 	return (0);
 }

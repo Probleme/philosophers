@@ -6,11 +6,11 @@
 /*   By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:13:59 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/05/25 10:34:58 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/02 18:09:06 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "../inc/philo.h"
 
 int	ft_atoi(const char *str)
 {
@@ -37,50 +37,51 @@ int	ft_atoi(const char *str)
 	return (r * s);
 }
 
-int	print_error(char *str, t_data *data)
+int	print_error(char *str)
 {
 	printf("%s\n", str);
-	if (data != NULL)
-		exit(1);
 	return (1);
 }
 
-int	ft_strcmp(char *s1, char *s2)
+long long	ft_get_time(void)
 {
-	int	i;
+	long long		sec;
+	struct timeval	time;
 
-	i = 0;
-	while (s1[i] && s2[i] && s1[i] == s2[i])
-		i++;
-	return (s1[i] - s2[i]);
+	gettimeofday(&time, NULL);
+	sec = (time.tv_sec * 1000) + (time.tv_usec / 1000);
+	return (sec);
 }
 
-int	ft_usleep(useconds_t time)
+void	ft_wait(t_data *data, int time)
 {
-	u_int64_t	start;
+	long long	now_time;
+	long long	start_time;
 
-	start = get_time();
-	while ((get_time() - start) < time)
-		usleep(time / 10);
-	return (0);
-}
-void	ft_exit(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->num_philo)
+	start_time = ft_get_time();
+	while (data->is_all_safe)
 	{
-		pthread_mutex_destroy(&data->forks[i]);
-		pthread_mutex_destroy(&data->philosophers[i].lock);
-		i++;
+		now_time = ft_get_time();
+		if (now_time - start_time >= time)
+			break ;
+		usleep(300);
 	}
-	pthread_mutex_destroy(&data->write);
-	pthread_mutex_destroy(&data->lock);
-	if (data->id_thread)
-		free(data->id_thread);
-	if (data->forks)
-		free(data->forks);
-	if (data->philosophers)
-		free(data->philosophers);
+}
+
+void	print_msg(t_data *data, t_philo *philo, char *str)
+{
+	long long	time;
+
+	if (data->is_all_safe == 0)
+		time = 0;
+	else
+	{
+		pthread_mutex_lock(&data->print);
+		if (data->is_all_safe != 0)
+		{
+			time = ft_get_time() - data->start_time;
+			printf("%lld ms	%d	%s\n", time, philo->id_philo, str);
+		}
+		pthread_mutex_unlock(&data->print);
+	}
 }

@@ -6,7 +6,7 @@
 #    By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/24 17:34:01 by ataouaf           #+#    #+#              #
-#    Updated: 2023/05/29 15:49:19 by ataouaf          ###   ########.fr        #
+#    Updated: 2023/06/02 18:04:48 by ataouaf          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ SOURCES = ./src
 OBJECTS = ./obj
 NAME = philo
 
-SRCS = philo.c parsing.c init.c activity.c thread.c utils.c
+SRCS = philo.c init.c activity.c thread.c utils.c
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
@@ -27,9 +27,9 @@ all : $(NAME)
 $(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(OBJECTS)/%.o : $(SOURCES)/%.c $(INCLUDE)/philo.h
+$(OBJECTS)/%.o : $(SOURCES)/%.c 
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $< -o $(NAME)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
 	$(RM) $(OBJECTS)
