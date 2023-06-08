@@ -3,119 +3,98 @@
 /*                                                        :::      ::::::::   */
 /*   thread.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ataouaf <ataouaf@student.1337.ma>          +#+  +:+       +#+        */
+/*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:04 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/03 19:46:59 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/08 10:56:56 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philo.h"
 
-int	begin_philo(t_data *data, t_philo *philo)
+void	*manage(void *philos)
 {
-	int		i;
-	void	*philo_v;
+	t_philo	*philo;
 
-	i = 0;
-	data->start_time = ft_get_time();
-	while (i < data->num_philo)
+	philo = (t_philo *)philos;
+	while (philo->data->dead == 0)
 	{
-		philo_v = (void *)&(philo[i]);
-		if (pthread_create(&(philo[i].tid), NULL, do_philo, philo_v) == -1)
-			return (print_error("Error\nthread create failed"));
-		i++;
-	}
-	ft_wait(data, data->time_to_eat);
-	check_philo_died(data);
-	return (0);
-}
-
-void	check_philo_died(t_data *data)
-{
-	while (data->is_all_safe)
-	{
-		pthread_mutex_lock(&(data->eat));
-		if (check_eat_time(data))
-			break ;
-		if (data->must_eat_num != -1)
-			if (check_must_eat(data))
-				break ;
-		pthread_mutex_unlock(&(data->eat));
-		usleep(100);
-	}
-	pthread_mutex_unlock(&(data->eat));
-	clear_thread(data);
-}
-
-int	check_eat_time(t_data *p)
-{
-	long long	time;
-	int			i;
-
-	i = 0;
-	while (i < p->num_philo)
-	{
-		time = ft_get_time() - p->start_time;
-		if ((time - p->philo[i].last_eat_time) > p->time_to_die)
+		pthread_mutex_lock(&philo->lock);
+		if (get_time() >= philo->time_to_die && philo->dining == 0)
+			print_msg("died", philo);
+		if (philo->dining_count == philo->data->eat_num)
 		{
-			pthread_mutex_lock(&p->print);
-			p->is_all_safe = 0;
-			printf("%lld ms	%d	is died\n", time, p->philo[i].id_philo);
-			pthread_mutex_unlock(&p->print);
-			return (1);
+			pthread_mutex_lock(&philo->lock);
+			philo->data->finish++;
+			philo->dining_count++;
+			pthread_mutex_unlock(&philo->lock);
 		}
-		i++;
+		pthread_mutex_unlock(&philo->lock);
 	}
-	return (0);
+	return ((void *)0);
 }
 
-int	check_must_eat(t_data *data)
+void	*mythread(void *philos)
 {
-	long long	time;
+	t_philo	*philo;
+
+	philo = (t_philo *)philos;
+	philo->time_to_die = philo->data->time_to_die + get_time();
+	if (pthread_create(&philo->t1, NULL, &manage, (void *)philo))
+		return ((void *)1);
+	while (philo->data->dead == 0)
+	{
+		dining(philo);
+		print_msg("is thinking", philo);
+	}
+	if (pthread_join(philo->t1, NULL))
+		return ((void *)1);
+	return ((void *)0);
+}
+
+void	*monitoring(void *data_pointer)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *) data_pointer;
+	pthread_mutex_lock(&philo->data->write);
+	printf("data val: %d", philo->data->dead);
+	pthread_mutex_unlock(&philo->data->write);
+	while (philo->data->dead == 0)
+	{
+		pthread_mutex_lock(&philo->lock);
+		if (philo->data->finish >= philo->data->num_philo)
+			philo->data->dead = 1;
+		pthread_mutex_unlock(&philo->lock);
+	}
+	return ((void *)0);
+}
+
+int	init_threads(t_data *data)
+{
 	int			i;
-	int			check;
+	pthread_t	thread;
 
 	i = 0;
-	check = 0;
+	data->time_to_start = get_time();
+	if (data->eat_num > 0)
+	{
+		if (pthread_create(&thread, NULL, &monitoring, &data->philosophers[0]))
+			return (print_error("Error create threads", data));
+	}
 	while (i < data->num_philo)
 	{
-		if (data->philo[i].eat_count >= data->must_eat_num && data->must_eat_num != -1)
-			check++;
+		if (pthread_create(&data->id_thread[i], NULL, &mythread, &data->philosophers[i]))
+			return (print_error("Error create threads", data));
+		ft_usleep(1);
 		i++;
 	}
-	if (check == data->num_philo)
+	i = 0;
+	while (i < data->num_philo)
 	{
-		pthread_mutex_lock(&data->print);
-		data->is_all_safe = 0;
-		time = ft_get_time() - data->start_time;
-		printf("%lldms	all philo eat %d time\n", time, data->must_eat_num);
-		pthread_mutex_unlock(&data->print);
-		return (1);
+		if (pthread_join(data->id_thread[i], NULL))
+			return (print_error("Error joining threads", data));
+		i++;
 	}
 	return (0);
-}
-
-void	clear_thread(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while (i < data->num_philo)
-	{
-		pthread_join(data->philo[i].tid, NULL);
-		i++;
-	}
-	i = 0;
-	while (i < data->num_philo)
-	{
-		pthread_mutex_destroy(&(data->forks[i]));
-		i++;
-	}
-	free(data->forks);
-	free(data->philo);
-	free(data->fork_st);
-	pthread_mutex_destroy(&(data->print));
-	pthread_mutex_destroy(&(data->eat));
-	pthread_mutex_destroy(&(data->search_fork));
 }
