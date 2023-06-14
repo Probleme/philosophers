@@ -6,95 +6,80 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:04 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/08 10:56:56 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/14 11:02:38 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philo.h"
 
-void	*manage(void *philos)
+void	join_thread(t_data *data, int i)
 {
-	t_philo	*philo;
+	pthread_mutex_lock(&data->is_safe);
+	data->end = 1;
+	pthread_mutex_unlock(&data->is_safe);
+	while (i >= 0)
+		pthread_join(data->philo[--i].thread, NULL);
+}
 
-	philo = (t_philo *)philos;
-	while (philo->data->dead == 0)
+int	check_is_died(t_data *data)
+{
+	int	i;
+	int	end;
+
+	end = 0;
+	i = -1;
+	while (!end && ++i < data->philo_nbr)
 	{
-		pthread_mutex_lock(&philo->lock);
-		if (get_time() >= philo->time_to_die && philo->dining == 0)
-			print_msg("died", philo);
-		if (philo->dining_count == philo->data->eat_num)
+		pthread_mutex_lock(&data->philo_mutex[i]);
+		if ((data->philo[i].t_last_meal + data->time_to_die)
+			<= ft_get_time_ms(data->time_to_start))
 		{
-			pthread_mutex_lock(&philo->lock);
-			philo->data->finish++;
-			philo->dining_count++;
-			pthread_mutex_unlock(&philo->lock);
+			end = 1;
+			pthread_mutex_lock(&data->is_safe);
+			data->end = end;
+			printf("%ld ms %d%s", ft_get_time_ms(data->time_to_start),
+				data->philo[i].id + 1, " died\n");
+			pthread_mutex_unlock(&data->is_safe);
 		}
-		pthread_mutex_unlock(&philo->lock);
+		pthread_mutex_unlock(&data->philo_mutex[i]);
+		pthread_mutex_lock(&data->is_safe);
+		end = data->end;
+		pthread_mutex_unlock(&data->is_safe);
 	}
-	return ((void *)0);
+	return (end);
 }
 
-void	*mythread(void *philos)
+void	check_end(t_data *data)
 {
-	t_philo	*philo;
+	int	end;
 
-	philo = (t_philo *)philos;
-	philo->time_to_die = philo->data->time_to_die + get_time();
-	if (pthread_create(&philo->t1, NULL, &manage, (void *)philo))
-		return ((void *)1);
-	while (philo->data->dead == 0)
+	end = 0;
+	while (!end)
 	{
-		dining(philo);
-		print_msg("is thinking", philo);
+		if (check_is_died(data))
+			break ;
+		usleep(100);
 	}
-	if (pthread_join(philo->t1, NULL))
-		return ((void *)1);
-	return ((void *)0);
 }
 
-void	*monitoring(void *data_pointer)
+void	begin_philo(t_data *data)
 {
-	t_philo	*philo;
+	int		i;
 
-	philo = (t_philo *) data_pointer;
-	pthread_mutex_lock(&philo->data->write);
-	printf("data val: %d", philo->data->dead);
-	pthread_mutex_unlock(&philo->data->write);
-	while (philo->data->dead == 0)
+	i = -1;
+	pthread_mutex_lock(&data->is_safe);
+	while (++i < data->philo_nbr)
 	{
-		pthread_mutex_lock(&philo->lock);
-		if (philo->data->finish >= philo->data->num_philo)
-			philo->data->dead = 1;
-		pthread_mutex_unlock(&philo->lock);
+		if (pthread_create(&data->philo[i].thread, NULL,
+				routine, (void *)(&data->philo[i])))
+		{
+			pthread_mutex_unlock(&data->is_safe);
+			join_thread(data, i);
+			ft_error("Thread creation ft_error\n", data);
+		}
 	}
-	return ((void *)0);
-}
-
-int	init_threads(t_data *data)
-{
-	int			i;
-	pthread_t	thread;
-
-	i = 0;
-	data->time_to_start = get_time();
-	if (data->eat_num > 0)
-	{
-		if (pthread_create(&thread, NULL, &monitoring, &data->philosophers[0]))
-			return (print_error("Error create threads", data));
-	}
-	while (i < data->num_philo)
-	{
-		if (pthread_create(&data->id_thread[i], NULL, &mythread, &data->philosophers[i]))
-			return (print_error("Error create threads", data));
-		ft_usleep(1);
-		i++;
-	}
-	i = 0;
-	while (i < data->num_philo)
-	{
-		if (pthread_join(data->id_thread[i], NULL))
-			return (print_error("Error joining threads", data));
-		i++;
-	}
-	return (0);
+	pthread_mutex_unlock(&data->is_safe);
+	check_end(data);
+	while (i > 0)
+		pthread_join(data->philo[--i].thread, NULL);
 }

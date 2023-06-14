@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:38:45 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/08 10:59:32 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/14 15:44:33 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,52 +19,53 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+# define INVALID_ARGS "Invalid arguments.Try:\n \
+number_of_philosophers time_to_die time_to_eat time_to_sleep \
+[number_of_times_each_philosopher_must_eat]\n"
+
 typedef struct s_philo
 {
 	int				id;
-	pthread_t		t1;
-	int				dining_count;
-	int				status;
-	int				dining;
-	uint64_t		time_to_die;
-	pthread_mutex_t	lock;
-	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*left_fork;
+	int				t_last_meal;
+	long int		time_to_start;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				time_to_think;
+	int				must_eat_num;
+	int				t_last_act;
+	int				time;
+	int				first_fork;
+	int				second_fork;
+	pthread_t		thread;
 	struct s_data	*data;
+	pthread_mutex_t	*mutex;
 }					t_philo;
 
 typedef struct s_data
 {
-	pthread_t		*id_thread;
-	int				num_philo;
-	u_int64_t		time_to_die;
-	u_int64_t		time_to_eat;
-	u_int64_t		time_to_sleep;
-	u_int64_t		time_to_start;
-	int				eat_num;
-	int				dead;
-	int				finish;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	lock;
-	pthread_mutex_t	write;
-	t_philo			*philosophers;
+	int				philo_nbr;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				must_eat_num;
+	int				end;
+	int				plates;
+	long int		time_to_start;
+	t_philo			*philo;
+	pthread_mutex_t	*forks_mutex;
+	pthread_mutex_t	*philo_mutex;
+	pthread_mutex_t	is_safe;
 }					t_data;
 
-int					check_input(int argc, char **argv, t_data *data);
-int					ft_atoi(const char *str);
-int					print_error(char *str, t_data *data);
-int					check_num(int argc, char **argv, t_data *data);
-int					init_pthreads(t_data *data);
-int					init_philosophers(t_data *data);
-int					init_forks(t_data *data);
-uint64_t			get_time(void);
-int					ft_strcmp(char *s1, char *s2);
-void				print_msg(char *str, t_philo *philo);
-int					ft_usleep(useconds_t time);
-void				dining(t_philo *philo);
-void				*manage(void *philos);
-void				ft_exit(t_data *data);
-int					init_threads(t_data *data);
-void				*mythread(void *philos);
+int					ft_init(t_data *data, int argc, char **argv);
+void				begin_philo(t_data *data);
+void				*routine(void *philo_ptr);
+int					ft_error(char *err_msg, t_data *data);
+int					is_died(t_philo *philo);
+long int			ft_get_time_ms(long int start);
+int					ft_isnumeric(char c);
+int					print_status(t_philo *philo, char *str);
+void				ft_usleep(t_philo *philo, int time);
 
 #endif

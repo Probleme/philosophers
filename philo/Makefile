@@ -6,7 +6,7 @@
 #    By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/24 17:34:01 by ataouaf           #+#    #+#              #
-#    Updated: 2023/06/08 11:03:16 by ataouaf          ###   ########.fr        #
+#    Updated: 2023/06/14 16:09:44 by ataouaf          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,10 @@ SOURCES = ./src
 OBJECTS = ./obj
 NAME = philo
 
-SRCS = philo.c parsing.c init.c activity.c thread.c utils.c
+SRCS = philo.c init.c activity.c thread.c utils.c
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -g -fsanitize=thread
 OBJS = $(addprefix $(OBJECTS)/, $(SRCS:.c=.o))
 RM = rm -rf
 
