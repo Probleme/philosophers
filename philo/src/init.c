@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:21 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/14 15:59:24 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/15 14:34:08 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ void	ft_init_philo(t_philo *philo, t_data *data, int id)
 	philo->time_to_eat = data->time_to_eat;
 	philo->time_to_sleep = data->time_to_sleep;
 	philo->time_to_die = data->time_to_die;
-	philo->time_to_think = (philo->time_to_die - philo->time_to_eat - philo->time_to_sleep) / 2;
+	philo->time_to_think = (philo->time_to_die - philo->time_to_eat
+			- philo->time_to_sleep) / 2;
 }
 
 int	ft_init_mutex(t_data *data)
@@ -82,7 +83,8 @@ int	ft_init_data(t_data *data, int argc, char **argv)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
-	if (data->time_to_die < 1 || data->time_to_eat < 1 || data->time_to_sleep < 1)
+	if (data->time_to_die < 1 || data->time_to_eat < 1
+		|| data->time_to_sleep < 1)
 		return (ft_error("Invalid time value\n", data));
 	if (argc == 6)
 	{
@@ -99,7 +101,8 @@ int	ft_init(t_data *data, int argc, char **argv)
 {
 	data->philo_nbr = ft_atoi(argv[1]);
 	if (data->philo_nbr == 0)
-		return (ft_error("Invalid number of philos at least one philo\n", data));
+		return (ft_error("Invalid number of philos at least one philo\n",
+				data));
 	if (ft_init_data(data, argc, argv))
 		return (1);
 	data->philo = malloc(sizeof(t_philo) * data->philo_nbr);

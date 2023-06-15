@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:14 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/14 15:47:19 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/15 14:26:35 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	take_forks(t_philo *philo)
 	if (philo->must_eat_num > -1)
 	{
 		pthread_mutex_lock(&philo->data->is_safe);
-		if (++philo->data->plates >= philo->data->philo_nbr)
+		if (++philo->data->plates >= philo->data->must_eat_num * 2)
 			philo->data->end = 1;
 		pthread_mutex_unlock(&philo->data->is_safe);
 	}

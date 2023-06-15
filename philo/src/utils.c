@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:13:59 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/14 15:44:33 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/15 14:34:20 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int	print_status(t_philo *philo, char *str)
 	pthread_mutex_lock(&philo->data->is_safe);
 	end = philo->data->end;
 	if (!end)
-		printf("%ld ms %d%s", ft_get_time_ms(philo->time_to_start), philo->id + 1, str);
+		printf("%ld ms %d%s", ft_get_time_ms(philo->time_to_start), philo->id
+			+ 1, str);
 	pthread_mutex_unlock(&philo->data->is_safe);
 	return (end);
 }
@@ -45,7 +46,8 @@ void	ft_usleep(t_philo *philo, int time)
 	int	end;
 
 	end = 0;
-	while ((ft_get_time_ms(philo->time_to_start) < time + philo->t_last_act - 1))
+	while ((ft_get_time_ms(philo->time_to_start) < time + philo->t_last_act
+			- 1))
 	{
 		pthread_mutex_lock(&philo->data->is_safe);
 		end = philo->data->end;
@@ -55,6 +57,7 @@ void	ft_usleep(t_philo *philo, int time)
 		usleep(100);
 	}
 	if (!end)
-		while ((ft_get_time_ms(philo->time_to_start) < time + philo->t_last_act))
+		while ((ft_get_time_ms(philo->time_to_start) < time
+				+ philo->t_last_act))
 			usleep(100);
 }

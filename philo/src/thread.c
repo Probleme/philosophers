@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:04 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/14 11:02:38 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/15 14:28:37 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	begin_philo(t_data *data)
 		{
 			pthread_mutex_unlock(&data->is_safe);
 			join_thread(data, i);
-			ft_error("Thread creation ft_error\n", data);
+			ft_error("Error create threads\n", data);
 		}
 	}
 	pthread_mutex_unlock(&data->is_safe);
