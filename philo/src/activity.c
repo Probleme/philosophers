@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:14 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/15 14:26:35 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/16 14:12:58 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,15 @@ void	take_forks(t_philo *philo)
 	print_status(philo, " has taken a fork 2\n");
 	print_status(philo, " is eating\n");
 	pthread_mutex_lock(philo->mutex);
-	philo->t_last_meal = ft_get_time_ms(philo->time_to_start);
+	philo->time_last_eat = ft_get_time_ms(philo->time_to_start);
 	pthread_mutex_unlock(philo->mutex);
 	philo->t_last_act = ft_get_time_ms(philo->time_to_start);
 	philo->must_eat_num--;
 	if (philo->must_eat_num > -1)
 	{
 		pthread_mutex_lock(&philo->data->is_safe);
-		if (++philo->data->plates >= philo->data->must_eat_num * 2)
+		if (++philo->data->plates == philo->data->must_eat_num
+			* philo->data->philo_nbr)
 			philo->data->end = 1;
 		pthread_mutex_unlock(&philo->data->is_safe);
 	}
@@ -68,8 +69,6 @@ void	*routine(void *philo_ptr)
 
 	end = 0;
 	philo = (t_philo *)philo_ptr;
-	pthread_mutex_lock(&philo->data->is_safe);
-	pthread_mutex_unlock(&philo->data->is_safe);
 	if (philo->first_fork == philo->second_fork)
 	{
 		print_status(philo, " has taken a fork\n");

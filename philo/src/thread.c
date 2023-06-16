@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:04 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/15 14:28:37 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/16 14:53:34 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	check_is_died(t_data *data)
 	while (!end && ++i < data->philo_nbr)
 	{
 		pthread_mutex_lock(&data->philo_mutex[i]);
-		if ((data->philo[i].t_last_meal + data->time_to_die)
+		if ((data->philo[i].time_last_eat + data->time_to_die)
 			<= ft_get_time_ms(data->time_to_start))
 		{
 			end = 1;
@@ -62,7 +62,7 @@ void	check_end(t_data *data)
 	}
 }
 
-void	begin_philo(t_data *data)
+int	begin_philo(t_data *data)
 {
 	int		i;
 
@@ -75,11 +75,12 @@ void	begin_philo(t_data *data)
 		{
 			pthread_mutex_unlock(&data->is_safe);
 			join_thread(data, i);
-			ft_error("Error create threads\n", data);
+			return (ft_error("Error create threads\n", data));
 		}
 	}
 	pthread_mutex_unlock(&data->is_safe);
 	check_end(data);
 	while (i > 0)
 		pthread_join(data->philo[--i].thread, NULL);
+	return (0);
 }

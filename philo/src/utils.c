@@ -6,19 +6,51 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:13:59 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/15 14:34:20 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/16 14:47:44 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philo.h"
 
-long int	ft_get_time_ms(long int start)
+long	ft_atoi(const char *str)
 {
-	struct timeval	t;
+	int					i;
+	unsigned long long	r;
+	int					s;
 
-	if (gettimeofday(&t, NULL))
+	i = 0;
+	r = 0;
+	s = 1;
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			s *= -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		r = r * 10 + str[i] - '0';
+		i++;
+	}
+	return (r * s);
+}
+
+int	ft_isnumeric(char c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+size_t	ft_get_time_ms(size_t start)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL))
 		return (0);
-	return (t.tv_usec / 1000 + t.tv_sec * 1000 - start);
+	return (time.tv_usec / 1000 + time.tv_sec * 1000 - start);
 }
 
 int	print_status(t_philo *philo, char *str)
@@ -34,14 +66,7 @@ int	print_status(t_philo *philo, char *str)
 	return (end);
 }
 
-int	ft_isnumeric(char c)
-{
-	if (c >= '0' && c <= '9')
-		return (1);
-	return (0);
-}
-
-void	ft_usleep(t_philo *philo, int time)
+void	ft_usleep(t_philo *philo, size_t time)
 {
 	int	end;
 

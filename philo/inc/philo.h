@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:38:45 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/14 15:44:33 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/16 15:00:50 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,19 +22,19 @@
 # define INVALID_ARGS "Invalid arguments.Try:\n \
 number_of_philosophers time_to_die time_to_eat time_to_sleep \
 [number_of_times_each_philosopher_must_eat]\n"
+# define MAX_INT 2147483647
 
 typedef struct s_philo
 {
 	int				id;
-	int				t_last_meal;
-	long int		time_to_start;
+	size_t			time_to_start;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				time_to_think;
 	int				must_eat_num;
+	size_t			time_last_eat;
 	int				t_last_act;
-	int				time;
 	int				first_fork;
 	int				second_fork;
 	pthread_t		thread;
@@ -51,7 +51,7 @@ typedef struct s_data
 	int				must_eat_num;
 	int				end;
 	int				plates;
-	long int		time_to_start;
+	size_t			time_to_start;
 	t_philo			*philo;
 	pthread_mutex_t	*forks_mutex;
 	pthread_mutex_t	*philo_mutex;
@@ -59,13 +59,14 @@ typedef struct s_data
 }					t_data;
 
 int					ft_init(t_data *data, int argc, char **argv);
-void				begin_philo(t_data *data);
+int					begin_philo(t_data *data);
 void				*routine(void *philo_ptr);
 int					ft_error(char *err_msg, t_data *data);
 int					is_died(t_philo *philo);
-long int			ft_get_time_ms(long int start);
+size_t				ft_get_time_ms(size_t start);
 int					ft_isnumeric(char c);
 int					print_status(t_philo *philo, char *str);
-void				ft_usleep(t_philo *philo, int time);
+void				ft_usleep(t_philo *philo, size_t time);
+long				ft_atoi(const char *str);
 
 #endif

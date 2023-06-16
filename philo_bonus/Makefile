@@ -6,16 +6,16 @@
 #    By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/14 17:08:42 by ataouaf           #+#    #+#              #
-#    Updated: 2023/06/14 17:22:14 by ataouaf          ###   ########.fr        #
+#    Updated: 2023/06/15 18:09:51 by ataouaf          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 INCLUDE = ./inc
 SOURCES = ./src
-OBJECTS = ./obj_bonus
+OBJECTS = ./obj
 NAME = philo_bonus
 
-SRCS = 
+SRCS = init.c main.c philo.c utils.c monitor.c make_n_name.c
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror #-g -fsanitize=thread
@@ -27,7 +27,7 @@ all : $(NAME)
 $(NAME) : $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(OBJECTS)/%.o : $(SOURCES)/%.c $(INCLUDE)/philo_bonus.h
+$(OBJECTS)/%.o : $(SOURCES)/%.c $(INCLUDE)/philo.h
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 

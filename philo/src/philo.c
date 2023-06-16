@@ -6,21 +6,11 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:35:27 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/14 15:44:33 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/16 11:56:22 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philo.h"
-
-int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
 
 void	ft_free(t_data *data)
 {
@@ -55,8 +45,12 @@ int	check_args(int argc, char **argv)
 	{
 		j = 0;
 		while (argv[i][j])
-			if (!ft_isnumeric(argv[i][j++]) || ft_strlen(argv[i]) > 10)
+		{
+			if (!ft_isnumeric(argv[i][j++]))
 				return (ft_error("Error\nOnly positive numbers\n", NULL));
+			if (ft_atoi(argv[i]) > MAX_INT)
+				return (ft_error("Error\n Number is too big\n", NULL));
+		}
 	}
 	return (0);
 }
@@ -72,7 +66,8 @@ int	main(int argc, char **argv)
 		return (1);
 	if (ft_init(data, argc, argv) != 0)
 		return (1);
-	begin_philo(data);
+	if (begin_philo(data))
+		return (1);
 	ft_free(data);
 	return (0);
 }
