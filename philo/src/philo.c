@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:35:27 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/16 11:56:22 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/18 16:03:23 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	ft_free(t_data *data)
 		if (data->philo)
 			free(data->philo);
 		free(data);
+		data = NULL;
 	}
 }
 
@@ -47,7 +48,7 @@ int	check_args(int argc, char **argv)
 		while (argv[i][j])
 		{
 			if (!ft_isnumeric(argv[i][j++]))
-				return (ft_error("Error\nOnly positive numbers\n", NULL));
+				return (ft_error("Error\nOnly numbers between 0 and 9\n", NULL));
 			if (ft_atoi(argv[i]) > MAX_INT)
 				return (ft_error("Error\n Number is too big\n", NULL));
 		}

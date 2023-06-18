@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:38:45 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/16 15:00:50 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/16 15:23:14 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ typedef struct s_data
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_num;
+	int				all_eat;
 	int				end;
-	int				plates;
 	size_t			time_to_start;
 	t_philo			*philo;
 	pthread_mutex_t	*forks_mutex;
