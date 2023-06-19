@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:04 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/16 14:53:34 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/19 16:47:33 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	check_is_died(t_data *data)
 	return (end);
 }
 
-void	check_end(t_data *data)
+void	check_finish(t_data *data)
 {
 	int	end;
 
@@ -67,19 +67,16 @@ int	begin_philo(t_data *data)
 	int		i;
 
 	i = -1;
-	pthread_mutex_lock(&data->is_safe);
 	while (++i < data->philo_nbr)
 	{
 		if (pthread_create(&data->philo[i].thread, NULL,
 				routine, (void *)(&data->philo[i])))
 		{
-			pthread_mutex_unlock(&data->is_safe);
 			join_thread(data, i);
 			return (ft_error("Error create threads\n", data));
 		}
 	}
-	pthread_mutex_unlock(&data->is_safe);
-	check_end(data);
+	check_finish(data);
 	while (i > 0)
 		pthread_join(data->philo[--i].thread, NULL);
 	return (0);

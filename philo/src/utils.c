@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:13:59 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/18 16:16:49 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/19 20:05:36 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,23 +66,11 @@ int	print_status(t_philo *philo, char *str)
 	return (end);
 }
 
-void	ft_usleep(t_philo *philo, size_t time)
+void	ft_usleep(size_t time)
 {
-	int	end;
+	size_t    start;
 
-	end = 0;
-	while ((ft_get_time_ms(philo->time_to_start) < time + philo->t_last_act
-			- 1))
-	{
-		pthread_mutex_lock(&philo->data->is_safe);
-		end = philo->data->end;
-		pthread_mutex_unlock(&philo->data->is_safe);
-		if (end)
-			break ;
-		usleep(100);
-	}
-	if (!end)
-		while ((ft_get_time_ms(philo->time_to_start) < time
-				+ philo->t_last_act))
-			usleep(100);
+    start = ft_get_time_ms(0);
+    while ((ft_get_time_ms(0) - start) < time)
+        usleep(100);
 }

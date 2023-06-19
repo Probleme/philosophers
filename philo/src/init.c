@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:21 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/16 21:07:08 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/19 20:11:00 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ void	ft_init_philo(t_philo *philo, t_data *data, int id)
 {
 	philo->id = id;
 	philo->time_last_eat = 0;
-	philo->t_last_act = 0;
-	philo->first_fork = id % data->philo_nbr;
+	philo->first_fork = id ;
 	philo->second_fork = (id + 1) % data->philo_nbr;
 	philo->data = data;
 	philo->must_eat_num = data->must_eat_num;
@@ -61,6 +60,7 @@ int	ft_init_data(t_data *data, int argc, char **argv)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
+	data->time_to_start = ft_get_time_ms(0);
 	if (data->time_to_die < 1 || data->time_to_eat < 1
 		|| data->time_to_sleep < 1)
 		return (ft_error("Invalid time value\n", data));
@@ -72,7 +72,6 @@ int	ft_init_data(t_data *data, int argc, char **argv)
 	}
 	else
 		data->must_eat_num = -1;
-	data->time_to_start = ft_get_time_ms(0);
 	return (0);
 }
 

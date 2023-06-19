@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:38:45 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/16 15:23:14 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/19 16:44:42 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ typedef struct s_philo
 	int				time_to_think;
 	int				must_eat_num;
 	size_t			time_last_eat;
-	int				t_last_act;
 	int				first_fork;
 	int				second_fork;
 	pthread_t		thread;
@@ -66,7 +65,7 @@ int					is_died(t_philo *philo);
 size_t				ft_get_time_ms(size_t start);
 int					ft_isnumeric(char c);
 int					print_status(t_philo *philo, char *str);
-void				ft_usleep(t_philo *philo, size_t time);
+void				ft_usleep(size_t time);
 long				ft_atoi(const char *str);
 
 #endif
