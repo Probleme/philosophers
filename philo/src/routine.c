@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:14 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/19 20:15:01 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/24 21:20:53 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	*routine(void *philo_ptr)
 		end = is_died(philo);
 	}
 	if (philo->id % 2)
-		usleep(100);
+		ft_usleep(philo->time_to_eat);
 	while (!end)
 	{
 		take_forks(philo);

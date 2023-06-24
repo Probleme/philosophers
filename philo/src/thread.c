@@ -6,7 +6,7 @@
 /*   By: ataouaf <ataouaf@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 16:14:04 by ataouaf           #+#    #+#             */
-/*   Updated: 2023/06/19 16:47:33 by ataouaf          ###   ########.fr       */
+/*   Updated: 2023/06/24 21:04:26 by ataouaf          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	check_is_died(t_data *data)
 	return (end);
 }
 
-void	check_finish(t_data *data)
+int	check_finish(t_data *data)
 {
 	int	end;
 
@@ -57,9 +57,10 @@ void	check_finish(t_data *data)
 	while (!end)
 	{
 		if (check_is_died(data))
-			break ;
+			return end;
 		usleep(100);
 	}
+	return (end);
 }
 
 int	begin_philo(t_data *data)
@@ -76,7 +77,8 @@ int	begin_philo(t_data *data)
 			return (ft_error("Error create threads\n", data));
 		}
 	}
-	check_finish(data);
+	if (!check_finish(data))
+        return 1;
 	while (i > 0)
 		pthread_join(data->philo[--i].thread, NULL);
 	return (0);
